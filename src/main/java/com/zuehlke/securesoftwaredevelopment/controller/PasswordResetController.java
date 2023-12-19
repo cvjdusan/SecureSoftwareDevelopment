@@ -18,18 +18,42 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class PasswordResetController {
 
-    private final HashedUserRepository repository;
     private final UserRepository userRepository;
 
-    PasswordResetController(HashedUserRepository repository, UserRepository userRepository) {
+    PasswordResetController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.repository = repository;
     }
 
     @PostMapping("/perform-password-change")
     public ResponseEntity<Void> resetPassword(String username, String newPassword) {
-        userRepository.changePassword(username, newPassword);
+        User user = userRepository.findUser(username);
+
+        if(user == null) {
+            return ResponseEntity.noContent().build();
+        }
+
+        if(!user.getBlocked()) {
+            String resetLink = "https://example.com/";
+
+            String emailBody = "Click on the link to change password " + resetLink;
+            sendEmail(emailBody);
+
+            int passwordChangeAttempts = user.getPasswordChangeAttempts() + 1;
+
+            userRepository.incPasswordChangeAttempts(username, passwordChangeAttempts);
+
+            if(passwordChangeAttempts >= 3) {
+                userRepository.blockUser(username);
+            }
+
+        } else {
+            System.out.println("User is blocked");
+        }
         return ResponseEntity.noContent().build();
+    }
+
+    private void sendEmail(String emailBody) {
+        System.out.println("Sending: " + emailBody);
     }
 
 }

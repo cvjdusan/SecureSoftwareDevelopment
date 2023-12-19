@@ -6,10 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 @Repository
 public class UserRepository {
@@ -23,7 +20,7 @@ public class UserRepository {
     }
 
     public User findUser(String username) {
-        String query = "SELECT id, username, password FROM users WHERE username='" + username + "'";
+        String query = "SELECT id, username, password, passwordChangeAttempts, isBlocked FROM users WHERE username='" + username + "'";
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -31,7 +28,9 @@ public class UserRepository {
                 int id = rs.getInt(1);
                 String username1 = rs.getString(2);
                 String password = rs.getString(3);
-                return new User(id, username1, password);
+                int passwordChangeAttempts = rs.getInt(4);
+                Boolean isBlocked = rs.getBoolean(5);
+                return new User(id, username1, password, passwordChangeAttempts, isBlocked);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -60,5 +59,50 @@ public class UserRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean changePassword(String username, String newPassword) {
+        String query = "UPDATE users SET password = ? WHERE username = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, newPassword);
+            preparedStatement.setString(2, username);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean incPasswordChangeAttempts(String username, int passwordChangeAttempts) {
+        String query = "UPDATE users SET passwordChangeAttempts = ? WHERE username = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, passwordChangeAttempts);
+            preparedStatement.setString(2, username);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean blockUser(String username) {
+        String query = "UPDATE users SET isBlocked = ? WHERE username = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setBoolean(1, true);
+            preparedStatement.setString(2, username);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

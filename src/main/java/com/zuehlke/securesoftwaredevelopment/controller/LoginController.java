@@ -49,4 +49,10 @@ public class LoginController {
         model.addAttribute("registered", true);
         return "register-totp";
     }
+
+    @GetMapping("/reset-password")
+    public String resetPassword() {
+        return "reset-password";
+    }
+
 }

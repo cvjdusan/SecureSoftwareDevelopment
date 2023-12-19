@@ -1,7 +1,7 @@
-insert into users(id, username, password)
-values (1, 'bruce', 'wayne'),
-       (2, 'peter', 'security_rules'),
-       (3, 'tom', 'guessmeifyoucan');
+insert into users(id, username, password, passwordChangeAttempts, isBlocked)
+values (1, 'bruce', 'wayne', 0, false),
+       (2, 'peter', 'security_rules',0, false),
+       (3, 'tom', 'guessmeifyoucan',0, false);
 
 insert into hashedUsers(id, username, passwordHash, salt)
 values (1, 'bruce', 'qw8Uxa2fXimKruS9wYEm4qm3ZaIGw/hJNvOG3PemhoA=', 'MEI4PU5hcHhaRHZz'),
