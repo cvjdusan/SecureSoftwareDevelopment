@@ -20,7 +20,7 @@ public class UserRepository {
     }
 
     public User findUser(String username) {
-        String query = "SELECT id, username, password, passwordChangeAttempts, isBlocked FROM users WHERE username='" + username + "'";
+        String query = "SELECT id, username, password, passwordChangeAttempts, isBlocked, email FROM users WHERE username='" + username + "'";
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -30,7 +30,8 @@ public class UserRepository {
                 String password = rs.getString(3);
                 int passwordChangeAttempts = rs.getInt(4);
                 Boolean isBlocked = rs.getBoolean(5);
-                return new User(id, username1, password, passwordChangeAttempts, isBlocked);
+                String email = rs.getString(6);
+                return new User(id, username1, password, passwordChangeAttempts, isBlocked, email);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -40,6 +41,18 @@ public class UserRepository {
 
     public boolean validCredentials(String username, String password) {
         String query = "SELECT username FROM users WHERE username='" + username + "' AND password='" + password + "'";
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean validUsername(String username) {
+        String query = "SELECT username FROM users WHERE username='" + username + "'";
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {

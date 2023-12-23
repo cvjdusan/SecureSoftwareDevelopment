@@ -1,7 +1,7 @@
-insert into users(id, username, password, passwordChangeAttempts, isBlocked)
-values (1, 'bruce', 'wayne', 0, false),
-       (2, 'peter', 'security_rules',0, false),
-       (3, 'tom', 'guessmeifyoucan',0, false);
+insert into users(id, username, password, passwordChangeAttempts, isBlocked, email)
+values (1, 'bruce', 'wayne', 0, false, 'bruce@gmail.com'),
+       (2, 'peter', 'security_rules',0, false, 'peter@gmail.com'),
+       (3, 'tom', 'guessmeifyoucan',0, false, 'guess@gmail.com');
 
 insert into hashedUsers(id, username, passwordHash, salt)
 values (1, 'bruce', 'qw8Uxa2fXimKruS9wYEm4qm3ZaIGw/hJNvOG3PemhoA=', 'MEI4PU5hcHhaRHZz'),

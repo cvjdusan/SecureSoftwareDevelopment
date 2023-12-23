@@ -28,7 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/reset-password").permitAll()
+                .antMatchers("/reset-password-xss").permitAll()
                 .antMatchers("/perform-password-change").permitAll()
+                .antMatchers("/reset-password-send-to-email").permitAll()
                 .antMatchers("/**").authenticated()
                 .and()
                 .formLogin()
@@ -40,8 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutSuccessUrl("/login")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID");
+                .invalidateHttpSession(true);
+                //.deleteCookies("JSESSIONID");
 
         // We need this one in order to access h2-console
         http.headers().frameOptions().sameOrigin();

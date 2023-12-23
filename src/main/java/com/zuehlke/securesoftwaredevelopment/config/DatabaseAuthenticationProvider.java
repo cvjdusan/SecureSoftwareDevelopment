@@ -35,6 +35,41 @@ public class DatabaseAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
+        boolean success = validUsername(username);
+        if (success) {
+            User user = userRepository.findUser(username);
+
+            if(!user.getBlocked()) {
+
+                if(!user.getPassword().equals(password)) {
+
+                    int passwordChangeAttempts = user.getPasswordChangeAttempts() + 1;
+
+                    userRepository.incPasswordChangeAttempts(username, passwordChangeAttempts);
+
+                    if(passwordChangeAttempts >= 3) {
+                        userRepository.blockUser(username);
+                        System.out.println("Blocking user");
+                    }
+                }
+                else {
+                    List<GrantedAuthority> grantedAuthorities = getGrantedAuthorities(user);
+                    return new UsernamePasswordAuthenticationToken(user, password, grantedAuthorities);
+                }
+
+            } else {
+                System.out.println("Failed login. User is blocked");
+            }
+        }
+
+        throw new BadCredentialsException(String.format(PASSWORD_WRONG_MESSAGE, username, password));
+    }
+
+    //@Override
+    public Authentication authenticateOld(Authentication authentication) throws AuthenticationException {
+        String username = authentication.getName();
+        String password = authentication.getCredentials().toString();
+
         Object details = authentication.getDetails();
         Integer totp = StringUtils.isEmpty(details) ? null : Integer.valueOf(details.toString());
 
@@ -64,5 +99,13 @@ public class DatabaseAuthenticationProvider implements AuthenticationProvider {
 
     private boolean validCredentials(String username, String password) {
         return userRepository.validCredentials(username, password);
+    }
+
+    private boolean validUsername(String username) {
+        return userRepository.validUsername(username);
+    }
+
+    private void sendEmail(String emailAddress, String emailBody) {
+        System.out.println("Sending to " + emailAddress + " : " + emailBody);
     }
 }

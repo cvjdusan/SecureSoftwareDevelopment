@@ -55,4 +55,9 @@ public class LoginController {
         return "reset-password";
     }
 
+    @GetMapping("/reset-password-xss")
+    public String resetPasswordXss() {
+        return "reset-password-xss";
+    }
+
 }

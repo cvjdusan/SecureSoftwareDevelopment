@@ -12,8 +12,8 @@ import java.security.SecureRandom;
 public class CsrfHttpSessionListener implements HttpSessionListener {
     @Override
     public void sessionCreated(HttpSessionEvent se) {
-        String token = createToken();
-        se.getSession().setAttribute("CSRF_TOKEN", token);
+        //String token = createToken();
+        //se.getSession().setAttribute("CSRF_TOKEN", token);
     }
 
     private static String createToken() {

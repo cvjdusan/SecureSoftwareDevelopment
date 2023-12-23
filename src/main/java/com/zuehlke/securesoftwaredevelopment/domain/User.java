@@ -12,14 +12,16 @@ public class User implements UserDetails {
     private final String password;
     private final int passwordChangeAttempts;
     private final Boolean isBlocked;
+    private final String email;
     private List<GrantedAuthority> authorities;
 
-    public User(int id, String username, String password, int passwordChangeAttempts, Boolean isBlocked) {
+    public User(int id, String username, String password, int passwordChangeAttempts, Boolean isBlocked, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.passwordChangeAttempts = passwordChangeAttempts;
         this.isBlocked = isBlocked;
+        this.email = email;
     }
 
 
@@ -43,6 +45,10 @@ public class User implements UserDetails {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public void setAuthorities(List<GrantedAuthority> authorities) {

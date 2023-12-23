@@ -22,8 +22,12 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
-    <form class="d-flex flex-column justify-content-around" style="height: 200px" method="POST" action="/reset-password">
-        <a th:href="@{/reset-password}">Forgot Password?</a>
+    <form class="d-flex flex-column justify-content-around" style="height: 200px">
+        <a th:href="@{/reset-password}">Forgot Password? (blocking)</a>
+    </form>
+
+    <form class="d-flex flex-column justify-content-around" style="height: 200px">
+        <a th:href="@{/reset-password-xss}">Forgot Password? (XSS)</a>
     </form>
 </div>
 </body>

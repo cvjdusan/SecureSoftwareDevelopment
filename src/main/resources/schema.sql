@@ -10,6 +10,7 @@ create table users
     password varchar(255) not null,
     passwordChangeAttempts int DEFAULT 0,
     isBlocked BOOLEAN DEFAULT FALSE,
+    email varchar(255) not null,
     PRIMARY KEY (ID)
 );
 
